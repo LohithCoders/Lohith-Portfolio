@@ -1,0 +1,3 @@
+import type {Metadata} from 'next';import './globals.css';
+export const metadata:Metadata={title:{default:'Lohith — Beyond the Interface',template:'%s · Lohith'},description:'AI-focused developer exploring intelligent products, agentic systems and automation. Explore Lohith’s projects, skills and technical journey.',metadataBase:new URL('https://example.com'),openGraph:{title:'Lohith — Beyond the Interface',description:'Building Intelligent Experiences at the Intersection of AI, Automation & Innovation.',type:'website'},twitter:{card:'summary_large_image'},robots:{index:true,follow:true}};
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body>{children}</body></html>}
