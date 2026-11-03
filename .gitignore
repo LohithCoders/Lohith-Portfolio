@@ -1,6 +1,16 @@
 node_modules
 .next
+.next-build
+.next-dev
 out
 .env*
 !.env.example
 *.tsbuildinfo
+
+test-results/
+playwright-report/
+.playwright-browsers/
+audit-production.json
+.next-build/
+.playwright-mcp/
+/phase1-desktop.png

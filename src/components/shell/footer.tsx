@@ -1,0 +1,1 @@
+import Link from 'next/link';export function Footer(){return <footer className="site-footer"><Link href="/" className="footer-mark">L.</Link><p>© {new Date().getFullYear()} Lohith · Made with curiosity</p><Link href="/contact">Start a conversation ↗</Link></footer>}
