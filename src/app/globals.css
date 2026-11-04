@@ -125,3 +125,5 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
   .hero-links{display:flex;flex-wrap:wrap;column-gap:clamp(14px,4vw,20px);row-gap:10px;font-size:clamp(11px,3.2vw,12px)}
   .hero-links>span{flex-basis:100%}
 }
+
+.scene-guide-reopen{min-height:44px;cursor:pointer;touch-action:manipulation}
