@@ -22,11 +22,23 @@ export function Header(){
 
     const updateActive=()=>{
       const marker=96;
+      const atBottom=window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-2;
+      if(atBottom){
+        const lastVisible=sections.filter(section=>{
+          const bounds=section.getBoundingClientRect();
+          return bounds.bottom>marker&&bounds.top<window.innerHeight;
+        }).at(-1);
+        if(lastVisible){setActiveSection(current=>current===lastVisible.id?current:lastVisible.id);return;}
+      }
+
       const crossed=sections.filter(section=>{
         const bounds=section.getBoundingClientRect();
         return bounds.top<=marker&&bounds.bottom>marker;
       }).sort((a,b)=>b.getBoundingClientRect().top-a.getBoundingClientRect().top)[0];
       if(crossed){setActiveSection(current=>current===crossed.id?current:crossed.id);return;}
+
+      const visible=sections.map(section=>({section,bounds:section.getBoundingClientRect()})).map(item=>({...item,visibleHeight:Math.max(0,Math.min(item.bounds.bottom,window.innerHeight)-Math.max(item.bounds.top,marker))})).sort((a,b)=>b.visibleHeight-a.visibleHeight)[0];
+      if(visible?.visibleHeight){setActiveSection(current=>current===visible.section.id?current:visible.section.id);return;}
 
       const passed=sections.filter(section=>section.getBoundingClientRect().bottom<=marker).at(-1);
       const next=passed?.id??null;
@@ -55,7 +67,15 @@ export function Header(){
         const homeTarget=pathname==='/'?item.homeSectionId:undefined;
         const href=homeTarget?`#${homeTarget}`:item.href;
         const isActive=homeTarget?activeSection===homeTarget:pathname===item.href||pathname.startsWith(`${item.href}/`);
-        return <Link className={isActive?'is-active':undefined} key={item.id} href={href} aria-current={isActive?(homeTarget?'location':'page'):undefined} onClick={closeMenu}>{item.label}</Link>;
+        return <Link className={isActive?'is-active':undefined} key={item.id} href={href} aria-current={isActive?(homeTarget?'location':'page'):undefined} onClick={event=>{
+          closeMenu();
+          if(!homeTarget)return;
+          event.preventDefault();
+          const target=document.getElementById(homeTarget);
+          if(!target)return;
+          if(window.location.hash!==href)window.history.pushState({},'',href);
+          target.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+        }}>{item.label}</Link>;
       })}
     </nav>
   </header>;
