@@ -2,6 +2,7 @@ node_modules
 .next
 .next-build
 .next-dev
+.next-pages
 out
 .env*
 !.env.example

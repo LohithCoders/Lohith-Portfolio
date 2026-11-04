@@ -147,7 +147,7 @@ export function SceneRuntime({reducedMotion}:SceneRuntimeProps){
   const activate=(node:SceneNode)=>{setHovered(null);router.push(node.href);};
 
   return <>
-    <Canvas className="scene-canvas" aria-hidden="true" camera={{position:[0,0,11],fov:43}} dpr={mobile?[1,1.25]:[1,1.6]} frameloop={!visible?'never':reducedMotion||pathname!=='/'?'demand':'always'} gl={{alpha:true,antialias:!mobile,powerPreference:'high-performance'}} onCreated={()=>setReady(true)} fallback={<div className="scene-fallback-art"><span>LR</span><i/><b>INTERACTIVE SCENE UNAVAILABLE</b></div>} style={{pointerEvents:pathname==='/'&&interactive?'auto':'none',opacity:pathname==='/'&&interactive?(mobile ? .18 : 1):pathname==='/' ? .22 : .08}}>
+    <Canvas className="scene-canvas" aria-hidden="true" camera={{position:[0,0,11],fov:43}} dpr={mobile?[1,1.15]:[1,1.35]} frameloop={!visible?'never':reducedMotion||pathname!=='/'||!interactive?'demand':'always'} gl={{alpha:true,antialias:!mobile,powerPreference:'high-performance'}} onCreated={()=>setReady(true)} fallback={<div className="scene-fallback-art"><span>LR</span><i/><b>INTERACTIVE SCENE UNAVAILABLE</b></div>} style={{pointerEvents:pathname==='/'&&interactive?'auto':'none',opacity:pathname==='/'&&interactive?(mobile ? .18 : 1):pathname==='/' ? .22 : .08}}>
       <Suspense fallback={null}><Universe pathname={pathname} mobile={mobile} reducedMotion={reducedMotion} onHover={setHovered} onLeave={()=>setHovered(null)} onSelect={activate} hovered={hovered?.id??null}/></Suspense>
     </Canvas>
     {ready&&pathname==='/'&&interactive&&(showGuide&&guideExpanded?<aside className={`scene-tooltip${mobile?' is-mobile':''}${shortViewport?' is-compact':''}`} aria-label="3D navigation instructions">
