@@ -136,4 +136,5 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 .project-title-link:hover{transform:translateY(-1px);border-color:rgba(168,184,154,.72);background:rgba(168,184,154,.16)}
 .project-title-link.is-primary{border-color:rgba(168,184,154,.72);background:rgba(168,184,154,.2);color:var(--color-ivory)}
 .project-title-link.is-placeholder{border-style:dashed;color:#a2a79d}
+.project-title-link svg{width:15px;height:15px;flex:none}
 @media(max-width:900px){.project-title-row{grid-template-columns:minmax(0,1fr);align-items:start;gap:16px}.project-title-links{justify-content:flex-start}}

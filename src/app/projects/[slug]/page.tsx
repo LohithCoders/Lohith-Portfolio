@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import Link from 'next/link';
+import {ArrowUpRight} from 'lucide-react';
 import {notFound} from 'next/navigation';
 import {Breadcrumbs,RelatedLinks} from '@/components/content/shared';
 import {projects,projectBySlug} from '@/data/projects';
@@ -27,8 +28,8 @@ export default async function ProjectDetail({params}:{params:Promise<{slug:strin
       <div className="project-title-row">
         <h1>{project.name}</h1>
         <div className="project-title-links">
-          {project.githubUrl==='TODO'?<span className="project-title-link is-placeholder">Repository · TODO</span>:<a className="project-title-link" href={project.githubUrl} target="_blank" rel="noopener noreferrer">Repository ↗</a>}
-          {project.liveUrl==='TODO'?<span className="project-title-link is-placeholder">Live demo · TODO</span>:<a className="project-title-link is-primary" href={project.liveUrl} target="_blank" rel="noopener noreferrer">Live demo ↗</a>}
+          {project.githubUrl==='TODO'?<span className="project-title-link is-placeholder">Repository · TODO</span>:<a className="project-title-link" href={project.githubUrl} target="_blank" rel="noopener noreferrer">Repository <ArrowUpRight aria-hidden="true"/></a>}
+          {project.liveUrl==='TODO'?<span className="project-title-link is-placeholder">Live demo · TODO</span>:<a className="project-title-link is-primary" href={project.liveUrl} target="_blank" rel="noopener noreferrer">Live demo <ArrowUpRight aria-hidden="true"/></a>}
         </div>
       </div>
       <p>{project.description}</p>
