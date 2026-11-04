@@ -61,8 +61,10 @@
 @media(max-width:767px){.scroll-cue{display:none}.scene-control b{font-size:10px}.scene-control small{font-size:11px}}
 .scene-tooltip-compact-guide{display:none}
 .scene-tooltip.is-compact{width:min(620px,calc(100vw - 32px));grid-template-columns:auto minmax(0,1fr);gap:12px;padding:9px 14px;border-radius:15px}
+.scene-tooltip.is-hidden{opacity:0;visibility:hidden;transform:translate(-50%,8px);transition:opacity .2s ease,transform .2s ease,visibility .2s}
 .scene-tooltip.is-compact .scene-tooltip-heading small,.scene-tooltip.is-compact .scene-tooltip-controls,.scene-tooltip.is-compact .scene-tooltip-preview{display:none}
 .scene-tooltip.is-compact .scene-tooltip-compact-guide{display:flex;align-items:center;justify-content:space-around;gap:14px;min-width:0}
 .scene-tooltip-compact-guide>span{display:flex;align-items:center;gap:6px;color:#c5d8ea;font:600 10px/1.25 var(--mono);letter-spacing:.04em;white-space:nowrap}
 .scene-tooltip-compact-guide svg{width:15px;height:15px;flex:0 0 auto;color:#70d9fa}
 @media(max-width:767px){.scene-tooltip.is-compact{width:calc(100vw - 16px);padding:8px 10px;gap:8px}.scene-tooltip.is-compact .scene-tooltip-heading{gap:6px}.scene-tooltip.is-compact .scene-tooltip-icon{width:26px;height:26px}.scene-tooltip.is-compact .scene-tooltip-heading b{font-size:9px}.scene-tooltip.is-compact .scene-tooltip-compact-guide{justify-content:flex-start}.scene-tooltip.is-compact .scene-tooltip-compact-guide>span{white-space:normal;font-size:9px;line-height:1.25}.scene-tooltip.is-compact .scene-tooltip-compact-guide svg{width:13px;height:13px}}
+@media(prefers-reduced-motion:reduce){.scene-tooltip.is-hidden{transition:none}}

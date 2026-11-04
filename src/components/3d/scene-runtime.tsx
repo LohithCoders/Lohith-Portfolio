@@ -117,12 +117,12 @@ function Universe({pathname,mobile,reducedMotion,onHover,onLeave,onSelect,hovere
 export function SceneRuntime({reducedMotion}:SceneRuntimeProps){
   const pathname=usePathname();const router=useRouter();
   const [mobile,setMobile]=useState(false);const [visible,setVisible]=useState(true);const [interactive,setInteractive]=useState(pathname==='/');
-  const [hovered,setHovered]=useState<SceneNode|null>(null);const [ready,setReady]=useState(false);const [shortViewport,setShortViewport]=useState(false);
+  const [hovered,setHovered]=useState<SceneNode|null>(null);const [ready,setReady]=useState(false);const [shortViewport,setShortViewport]=useState(false);const [guideVisible,setGuideVisible]=useState(true);
   useEffect(()=>{window.dispatchEvent(new CustomEvent<NavigationHoverDetail>(navigationHoverEvent,{detail:hovered?.id??null}));},[hovered]);
   useEffect(()=>{const query=window.matchMedia('(max-height:560px)');const update=()=>setShortViewport(query.matches);const initialUpdate=requestAnimationFrame(update);query.addEventListener('change',update);window.addEventListener('resize',update,{passive:true});return()=>{cancelAnimationFrame(initialUpdate);query.removeEventListener('change',update);window.removeEventListener('resize',update);};},[]);
   useEffect(()=>{const query=window.matchMedia('(max-width: 767px)');const update=()=>setMobile(query.matches);update();query.addEventListener('change',update);return()=>query.removeEventListener('change',update);},[]);
   useEffect(()=>{const root=document.querySelector('.scene-shell');if(!root)return;const observer=new IntersectionObserver(entries=>setVisible(entries[0]?.isIntersecting===true&&document.visibilityState==='visible'));observer.observe(root);const onVisibility=()=>setVisible(document.visibilityState==='visible');document.addEventListener('visibilitychange',onVisibility);return()=>{observer.disconnect();document.removeEventListener('visibilitychange',onVisibility);};},[]);
-  useEffect(()=>{const update=()=>setInteractive(pathname==='/'&&window.scrollY<window.innerHeight*.82);update();window.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update);return()=>{window.removeEventListener('scroll',update);window.removeEventListener('resize',update);};},[pathname]);
+  useEffect(()=>{const update=()=>{setInteractive(pathname==='/'&&window.scrollY<window.innerHeight*.82);setGuideVisible(pathname==='/'&&window.scrollY<48);};update();window.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update);return()=>{window.removeEventListener('scroll',update);window.removeEventListener('resize',update);};},[pathname]);
   const selectedNode=hovered;
   const activate=(node:SceneNode)=>{setHovered(null);router.push(node.href);};
 
@@ -130,7 +130,7 @@ export function SceneRuntime({reducedMotion}:SceneRuntimeProps){
     <Canvas className="scene-canvas" aria-hidden="true" camera={{position:[0,0,11],fov:43}} dpr={mobile?[1,1.25]:[1,1.6]} frameloop={!visible?'never':reducedMotion||pathname!=='/'?'demand':'always'} gl={{alpha:true,antialias:!mobile,powerPreference:'high-performance'}} onCreated={()=>setReady(true)} fallback={<div className="scene-fallback-art"><span>LR</span><i/><b>INTERACTIVE SCENE UNAVAILABLE</b></div>} style={{pointerEvents:pathname==='/'&&interactive?'auto':'none',opacity:pathname==='/'&&interactive?(mobile ? .18 : 1):pathname==='/' ? .22 : .08}}>
       <Suspense fallback={null}><Universe pathname={pathname} mobile={mobile} reducedMotion={reducedMotion} onHover={setHovered} onLeave={()=>setHovered(null)} onSelect={activate} hovered={hovered?.id??null}/></Suspense>
     </Canvas>
-    {ready&&pathname==='/'&&interactive&&<aside className={`scene-tooltip${mobile?' is-mobile':''}${shortViewport?' is-compact':''}`} aria-label="3D navigation instructions">
+    {ready&&pathname==='/'&&interactive&&<aside className={`scene-tooltip${mobile?' is-mobile':''}${shortViewport?' is-compact':''}${guideVisible?'':' is-hidden'}`} aria-label="3D navigation instructions" aria-hidden={!guideVisible}>
       <div className="scene-tooltip-heading"><span className="scene-tooltip-icon"><Compass aria-hidden="true"/></span><span><b>HOW TO EXPLORE</b><small>{mobile?'Navigate with touch':'Interactive portfolio map'}</small></span></div>
       <div className="scene-tooltip-controls">
         {mobile?<>
