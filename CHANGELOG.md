@@ -13,3 +13,14 @@
 - Full Playwright E2E is deferred until all development phases are complete per the user's latest instruction; the final test run will happen at release verification.
 - Expanded the verified GitHub-based project dataset to seven repositories, ordered by latest commit activity, and added Vite to the skill graph. Lint, typecheck and Vitest pass after the data update. The connected browser timed out on port 3100, so expanded project routes remain browser-unverified.
 - Phase 1 gate retry: production build succeeded with filesystem access outside the restricted runner (49 static pages); lint, typecheck, and Vitest pass. The ordinary sandbox build remains blocked by filesystem `EPERM`. Full Playwright E2E remains deferred as requested; Phase 1 build/unit gate passed and Phase 2 may proceed while the focused seven-project route smoke check is outstanding.
+
+### Phase 2 hub and persistent canvas (2026-11-04)
+
+- Added one persistent client-only React Three Fiber Canvas in the root layout, procedural identity core, eight navigable hub nodes, connections, particles, pointer/focus affordances, reduced-motion and low-power fallback behavior, route-synchronized GSAP camera targets, and animated page transitions.
+- Focused production browser checks: all eight accessible hub links were navigated in the preceding Phase 2 verification, preserving the same Canvas DOM node; browser history and direct `/projects/testpilot-ai` loading worked. Current production home has one Canvas and no horizontal overflow; TestPilot direct route has the expected page title and heading.
+- Captured production viewport screenshots at 1440x900 and 390x844. At the connected browser's 390px request, its reported CSS viewport was 375px and document scroll width was also 375px; no horizontal overflow was measured.
+- `npm run lint`, `npm run typecheck`, and `npm run test` pass (1 test file, 5 tests). Sandboxed `npm run build` hit Windows `EPERM`; rerunning with filesystem access succeeded, compiling, typechecking, generating 49 static pages, and completing traces (exit 0).
+- Changed `npm run start` to serve Next's standalone output and updated the build script to copy static/public assets. `npm run start` announced Ready; the connected browser loaded the production home and TestPilot route. Home had zero console errors and one upstream `THREE.Clock` deprecation warning from the bundled React Three Fiber runtime.
+- Full `npm run e2e` remains deferred until all portfolio development phases are complete per user instruction. No full E2E result is claimed.
+
+**Phase 2 implementation/build/unit gate: PASSED.** Focused production route and Canvas checks passed; the full Playwright suite remains intentionally outstanding.
