@@ -24,3 +24,13 @@
 - Full `npm run e2e` remains deferred until all portfolio development phases are complete per user instruction. No full E2E result is claimed.
 
 **Phase 2 implementation/build/unit gate: PASSED.** Focused production route and Canvas checks passed; the full Playwright suite remains intentionally outstanding.
+
+### Phase 3 skills and projects map (2026-11-04)
+
+- Added a relationship-driven map overlay to the Skills and Projects routes. Visitors can select a skill, inspect connected projects, then follow a project to its recorded skills or detail page. The map uses existing relationship data and native dialog behavior, including Escape dismissal.
+- Focused production browser check at 390×844 confirmed the overlay stayed within the viewport with no horizontal overflow. React → TestPilot AI → Vite was verified through the map. No browser errors were observed; Three.js emitted its existing upstream `THREE.Clock` deprecation warning.
+- `npm run lint`, `npm run typecheck`, `npm run test` (5 tests), and `npm run build` passed. The sandboxed build attempt hit Windows `EPERM`; the retry with filesystem access completed successfully and generated 49 pages.
+- The required Python → project → skill path is not represented by current verified relationships: no project currently lists Python in its related skills. Python remains selectable and the map accurately reports that it has no linked project. Do not add that edge until the project association is verified.
+- Full Playwright E2E remains deferred until all portfolio development phases are complete per user instruction.
+
+**Phase 3: BROKEN —** the relationship map implementation and build checks are complete; the required Python relationship path remains unresolved.
