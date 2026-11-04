@@ -7,6 +7,7 @@ import {usePathname,useRouter} from 'next/navigation';
 import {Suspense,useEffect,useMemo,useRef,useState} from 'react';
 import * as THREE from 'three';
 import {sceneCenter,sceneNodes,scenePosition,type SceneNode,type ScenePosition} from '@/data/scene';
+import {navigationHoverEvent,type NavigationHoverDetail} from '@/lib/navigation-events';
 
 type SceneRuntimeProps={reducedMotion:boolean};
 type CameraState={x:number;y:number;z:number;tx:number;ty:number;tz:number};
@@ -116,6 +117,7 @@ export function SceneRuntime({reducedMotion}:SceneRuntimeProps){
   const pathname=usePathname();const router=useRouter();
   const [mobile,setMobile]=useState(false);const [visible,setVisible]=useState(true);const [interactive,setInteractive]=useState(pathname==='/');
   const [hovered,setHovered]=useState<SceneNode|null>(null);const [ready,setReady]=useState(false);
+  useEffect(()=>{window.dispatchEvent(new CustomEvent<NavigationHoverDetail>(navigationHoverEvent,{detail:hovered?.id??null}));},[hovered]);
   useEffect(()=>{const query=window.matchMedia('(max-width: 767px)');const update=()=>setMobile(query.matches);update();query.addEventListener('change',update);return()=>query.removeEventListener('change',update);},[]);
   useEffect(()=>{const root=document.querySelector('.scene-shell');if(!root)return;const observer=new IntersectionObserver(entries=>setVisible(entries[0]?.isIntersecting===true&&document.visibilityState==='visible'));observer.observe(root);const onVisibility=()=>setVisible(document.visibilityState==='visible');document.addEventListener('visibilitychange',onVisibility);return()=>{observer.disconnect();document.removeEventListener('visibilitychange',onVisibility);};},[]);
   useEffect(()=>{const update=()=>setInteractive(pathname==='/'&&window.scrollY<window.innerHeight*.82);update();window.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update);return()=>{window.removeEventListener('scroll',update);window.removeEventListener('resize',update);};},[pathname]);

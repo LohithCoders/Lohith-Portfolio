@@ -5,12 +5,20 @@ import {usePathname} from 'next/navigation';
 import {Menu,X} from 'lucide-react';
 import {useEffect,useState} from 'react';
 import {navigation} from '@/data/profile';
+import {navigationHoverEvent,type NavigationHoverDetail} from '@/lib/navigation-events';
 
 export function Header(){
   const pathname=usePathname();
   const [open,setOpen]=useState(false);
   const [activeSection,setActiveSection]=useState<string|null>(null);
+  const [hoveredNodeId,setHoveredNodeId]=useState<string|null>(null);
   const [scrolled,setScrolled]=useState(false);
+
+  useEffect(()=>{
+    const handleSceneHover=(event:Event)=>setHoveredNodeId((event as CustomEvent<NavigationHoverDetail>).detail);
+    window.addEventListener(navigationHoverEvent,handleSceneHover);
+    return()=>window.removeEventListener(navigationHoverEvent,handleSceneHover);
+  },[]);
 
   useEffect(()=>{
     if(pathname!=='/'){
@@ -66,8 +74,10 @@ export function Header(){
       {navigation.map(item=>{
         const homeTarget=pathname==='/'?item.homeSectionId:undefined;
         const href=homeTarget?`#${homeTarget}`:item.href;
-        const isActive=homeTarget?activeSection===homeTarget:pathname===item.href||pathname.startsWith(`${item.href}/`);
-        return <Link className={isActive?'is-active':undefined} key={item.id} href={href} aria-current={isActive?(homeTarget?'location':'page'):undefined} onClick={event=>{
+        const isRouteActive=pathname===item.href||pathname.startsWith(`${item.href}/`);
+        const isSectionActive=Boolean(item.homeSectionId&&activeSection===item.homeSectionId);
+        const isActive=isSectionActive||hoveredNodeId===item.id||isRouteActive;
+        return <Link className={isActive?'is-active':undefined} key={item.id} href={href} aria-current={isRouteActive?'page':isSectionActive?'location':undefined} onClick={event=>{
           closeMenu();
           if(!homeTarget)return;
           event.preventDefault();
