@@ -5,6 +5,7 @@ import {Line,useCursor} from '@react-three/drei';
 import {gsap} from 'gsap';
 import {usePathname,useRouter} from 'next/navigation';
 import {Suspense,useEffect,useMemo,useRef,useState} from 'react';
+import {Compass,Hand,Keyboard,Menu,MousePointer2,MousePointerClick} from 'lucide-react';
 import * as THREE from 'three';
 import {sceneCenter,sceneNodes,scenePosition,type SceneNode,type ScenePosition} from '@/data/scene';
 import {navigationHoverEvent,type NavigationHoverDetail} from '@/lib/navigation-events';
@@ -116,8 +117,9 @@ function Universe({pathname,mobile,reducedMotion,onHover,onLeave,onSelect,hovere
 export function SceneRuntime({reducedMotion}:SceneRuntimeProps){
   const pathname=usePathname();const router=useRouter();
   const [mobile,setMobile]=useState(false);const [visible,setVisible]=useState(true);const [interactive,setInteractive]=useState(pathname==='/');
-  const [hovered,setHovered]=useState<SceneNode|null>(null);const [ready,setReady]=useState(false);
+  const [hovered,setHovered]=useState<SceneNode|null>(null);const [ready,setReady]=useState(false);const [shortViewport,setShortViewport]=useState(false);
   useEffect(()=>{window.dispatchEvent(new CustomEvent<NavigationHoverDetail>(navigationHoverEvent,{detail:hovered?.id??null}));},[hovered]);
+  useEffect(()=>{const query=window.matchMedia('(max-height:560px)');const update=()=>setShortViewport(query.matches);const initialUpdate=requestAnimationFrame(update);query.addEventListener('change',update);window.addEventListener('resize',update,{passive:true});return()=>{cancelAnimationFrame(initialUpdate);query.removeEventListener('change',update);window.removeEventListener('resize',update);};},[]);
   useEffect(()=>{const query=window.matchMedia('(max-width: 767px)');const update=()=>setMobile(query.matches);update();query.addEventListener('change',update);return()=>query.removeEventListener('change',update);},[]);
   useEffect(()=>{const root=document.querySelector('.scene-shell');if(!root)return;const observer=new IntersectionObserver(entries=>setVisible(entries[0]?.isIntersecting===true&&document.visibilityState==='visible'));observer.observe(root);const onVisibility=()=>setVisible(document.visibilityState==='visible');document.addEventListener('visibilitychange',onVisibility);return()=>{observer.disconnect();document.removeEventListener('visibilitychange',onVisibility);};},[]);
   useEffect(()=>{const update=()=>setInteractive(pathname==='/'&&window.scrollY<window.innerHeight*.82);update();window.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update);return()=>{window.removeEventListener('scroll',update);window.removeEventListener('resize',update);};},[pathname]);
@@ -128,7 +130,21 @@ export function SceneRuntime({reducedMotion}:SceneRuntimeProps){
     <Canvas className="scene-canvas" aria-hidden="true" camera={{position:[0,0,11],fov:43}} dpr={mobile?[1,1.25]:[1,1.6]} frameloop={!visible?'never':reducedMotion||pathname!=='/'?'demand':'always'} gl={{alpha:true,antialias:!mobile,powerPreference:'high-performance'}} onCreated={()=>setReady(true)} fallback={<div className="scene-fallback-art"><span>LR</span><i/><b>INTERACTIVE SCENE UNAVAILABLE</b></div>} style={{pointerEvents:pathname==='/'&&interactive?'auto':'none',opacity:pathname==='/'&&interactive?(mobile ? .18 : 1):pathname==='/' ? .22 : .08}}>
       <Suspense fallback={null}><Universe pathname={pathname} mobile={mobile} reducedMotion={reducedMotion} onHover={setHovered} onLeave={()=>setHovered(null)} onSelect={activate} hovered={hovered?.id??null}/></Suspense>
     </Canvas>
-    {ready&&pathname==='/'&&interactive&&<div className="scene-tooltip" role="status"><b>{selectedNode?.label??'THE LOHITH UNIVERSE'}</b><span>{selectedNode?.description??'Select any orbiting node to explore a section.'}</span></div>}
+    {ready&&pathname==='/'&&interactive&&<aside className={`scene-tooltip${mobile?' is-mobile':''}${shortViewport?' is-compact':''}`} aria-label="3D navigation instructions">
+      <div className="scene-tooltip-heading"><span className="scene-tooltip-icon"><Compass aria-hidden="true"/></span><span><b>HOW TO EXPLORE</b><small>{mobile?'Navigate with touch':'Interactive portfolio map'}</small></span></div>
+      <div className="scene-tooltip-controls">
+        {mobile?<>
+          <div className="scene-control"><span className="scene-control-icon"><Hand aria-hidden="true"/></span><span><b>TAP A NODE</b><small>Open a section</small></span></div>
+          <div className="scene-control"><span className="scene-control-icon"><Menu aria-hidden="true"/></span><span><b>MENU</b><small>Browse all sections</small></span></div>
+        </>:<>
+          <div className="scene-control"><span className="scene-control-icon"><MousePointer2 aria-hidden="true"/></span><span><b>HOVER</b><small>Preview a section</small></span></div>
+          <div className="scene-control"><span className="scene-control-icon"><MousePointerClick aria-hidden="true"/></span><span><b>CLICK</b><small>Open a section</small></span></div>
+          <div className="scene-control"><span className="scene-control-icon"><Keyboard aria-hidden="true"/></span><span><b>TAB + ENTER</b><small>Navigate by keyboard</small></span></div>
+        </>}
+      </div>
+      <div className="scene-tooltip-compact-guide">{mobile?<span><Hand aria-hidden="true"/> TAP A NODE · MENU FOR ALL SECTIONS</span>:<><span><MousePointer2 aria-hidden="true"/> HOVER TO PREVIEW</span><span><MousePointerClick aria-hidden="true"/> CLICK TO OPEN</span></>}</div>
+      {selectedNode&&<div className="scene-tooltip-preview"><span className="scene-preview-dot"/><b>{selectedNode.label}</b><span>{selectedNode.description}</span></div>}
+    </aside>}
     {pathname==='/'&&interactive&&<nav className="scene-accessible-nav" aria-label="3D universe sections">{sceneNodes.map(node=>{const [x,y]=mobile?node.hitMobile:node.hitDesktop;return <button className="scene-accessible-button" key={node.id} type="button" style={{left:`${x}%`,top:`${y}%`}} onMouseEnter={()=>setHovered(node)} onMouseLeave={()=>setHovered(null)} onFocus={()=>setHovered(node)} onBlur={()=>setHovered(null)} onClick={()=>activate(node)} aria-label={`Open ${node.label}`}><span>{node.label}</span></button>;})}</nav>}
     {!ready&&<div className="scene-loading" role="status"><span className="scene-loader-dot"/>Loading interactive scene</div>}
   </>;
