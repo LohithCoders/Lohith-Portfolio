@@ -15,3 +15,4 @@ audit-production.json
 .next-build/
 .playwright-mcp/
 /phase1-desktop.png
+supabase/.temp/

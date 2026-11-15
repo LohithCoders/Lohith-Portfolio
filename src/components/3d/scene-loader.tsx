@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import {usePathname} from 'next/navigation';
 import {useEffect,useState} from 'react';
 
 const SceneRuntime=dynamic(()=>import('./scene-runtime').then(module=>module.SceneRuntime),{ssr:false});
@@ -16,9 +17,11 @@ function canUseWebGL(){
 }
 
 export function SceneLoader(){
+  const pathname=usePathname();
   const [supported,setSupported]=useState<boolean|null>(null);
   const [reducedMotion,setReducedMotion]=useState(false);
   useEffect(()=>{
+    if(pathname!=='/')return;
     const memory=(navigator as Navigator&{deviceMemory?:number}).deviceMemory;
     const lowPower=navigator.hardwareConcurrency<=2||(memory!==undefined&&memory<=2);
     const frame=window.requestAnimationFrame(()=>setSupported(!lowPower&&canUseWebGL()));
@@ -26,7 +29,9 @@ export function SceneLoader(){
     const update=()=>setReducedMotion(query.matches);
     const motionFrame=window.requestAnimationFrame(update);query.addEventListener('change',update);
     return()=>{window.cancelAnimationFrame(frame);window.cancelAnimationFrame(motionFrame);query.removeEventListener('change',update);};
-  },[]);
+  },[pathname]);
+
+  if(pathname!=='/')return null;
 
   return <div className="scene-shell">
     {supported===true?<SceneRuntime reducedMotion={reducedMotion}/>:<div className="scene-fallback-art"><span>LR</span><i/><b>INTERACTIVE SCENE UNAVAILABLE</b></div>}

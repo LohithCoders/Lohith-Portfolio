@@ -1,4 +1,103 @@
 'use client';
-import {useState} from 'react';import {contactSchema,type ContactValues} from '@/lib/contact-schema';import {profile} from '@/data/profile';
+import {useState} from 'react';
+import {contactSchema,type ContactValues} from '@/lib/contact-schema';
+import {profile} from '@/data/profile';
+
 type State='idle'|'success'|'error';
-export function ContactForm(){const [values,setValues]=useState<ContactValues>({name:'',email:'',subject:'',message:''}),[state,setState]=useState<State>('idle'),[message,setMessage]=useState('');function update(key:keyof ContactValues,value:string){setValues(current=>({...current,[key]:value}))}function submit(event:React.FormEvent<HTMLFormElement>){event.preventDefault();const parsed=contactSchema.safeParse(values);if(!parsed.success){setState('error');setMessage(parsed.error.issues[0]?.message||'Check the form fields.');return}if(profile.email==='TODO'){setState('error');setMessage('Contact email is not configured yet.');return}const subject=encodeURIComponent('Portfolio contact: '+parsed.data.subject);const body=encodeURIComponent(`Name: ${parsed.data.name}\nEmail: ${parsed.data.email}\n\n${parsed.data.message}`);setState('success');setMessage('Your email app will open with this message ready to send.');window.location.href=`mailto:${profile.email}?subject=${subject}&body=${body}`;}return <form className="contact-form" onSubmit={submit} noValidate><div className="form-row"><label htmlFor="contact-name">Name<input id="contact-name" name="name" autoComplete="name" required minLength={2} maxLength={120} value={values.name} onChange={event=>update('name',event.target.value)}/></label><label htmlFor="contact-email">Email<input id="contact-email" name="email" type="email" autoComplete="email" required value={values.email} onChange={event=>update('email',event.target.value)}/></label></div><label htmlFor="contact-subject">Subject<input id="contact-subject" name="subject" required minLength={3} maxLength={160} value={values.subject} onChange={event=>update('subject',event.target.value)}/></label><label htmlFor="contact-message">Message<textarea id="contact-message" name="message" rows={5} required minLength={12} maxLength={5000} value={values.message} onChange={event=>update('message',event.target.value)}/></label><div className="form-actions"><button className="button primary" type="submit">Open email app →</button>{profile.email!=='TODO'&&<a href={'mailto:'+profile.email}>Email directly ↗</a>}</div><p className={'form-status '+state} aria-live="polite" role={state==='error'?'alert':'status'}>{message}</p>{profile.email==='TODO'&&<p className="form-note">Direct email: TODO. Contact email must be configured before sending.</p>}</form>}
+
+export function ContactForm(){
+  const [values,setValues]=useState<ContactValues>({name:'',email:'',subject:'',message:''});
+  const [state,setState]=useState<State>('idle');
+  const [message,setMessage]=useState('');
+
+  function update(key:keyof ContactValues,value:string){
+    setValues(current=>({...current,[key]:value}));
+  }
+
+  function submit(event:React.FormEvent<HTMLFormElement>){
+    event.preventDefault();
+    const parsed=contactSchema.safeParse(values);
+    if(!parsed.success){
+      setState('error');
+      setMessage(parsed.error.issues[0]?.message||'Check the form fields.');
+      return;
+    }
+    if(profile.email==='TODO'){
+      setState('error');
+      setMessage('Contact email is not configured yet.');
+      return;
+    }
+    const subject=encodeURIComponent('Portfolio contact: '+parsed.data.subject);
+    const body=encodeURIComponent(`Name: ${parsed.data.name}\nEmail: ${parsed.data.email}\n\n${parsed.data.message}`);
+    setState('success');
+    setMessage('Your email app will open with this message ready to send.');
+    window.location.href=`mailto:${profile.email}?subject=${subject}&body=${body}`;
+  }
+
+  return (
+    <form className="contact-form" onSubmit={submit} noValidate>
+      <div className="form-row">
+        <label htmlFor="contact-name">
+          <span className="form-label-text">Name</span>
+          <input
+            id="contact-name"
+            name="name"
+            autoComplete="name"
+            placeholder="Your name"
+            required
+            minLength={2}
+            maxLength={120}
+            value={values.name}
+            onChange={event=>update('name',event.target.value)}
+          />
+        </label>
+        <label htmlFor="contact-email">
+          <span className="form-label-text">Email</span>
+          <input
+            id="contact-email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder="your.email@example.com"
+            required
+            value={values.email}
+            onChange={event=>update('email',event.target.value)}
+          />
+        </label>
+      </div>
+      <label htmlFor="contact-subject">
+        <span className="form-label-text">Subject</span>
+        <input
+          id="contact-subject"
+          name="subject"
+          placeholder="What would you like to discuss?"
+          required
+          minLength={3}
+          maxLength={160}
+          value={values.subject}
+          onChange={event=>update('subject',event.target.value)}
+        />
+      </label>
+      <label htmlFor="contact-message">
+        <span className="form-label-text">Message</span>
+        <textarea
+          id="contact-message"
+          name="message"
+          rows={5}
+          placeholder="Share details about your project, idea or question..."
+          required
+          minLength={12}
+          maxLength={5000}
+          value={values.message}
+          onChange={event=>update('message',event.target.value)}
+        />
+      </label>
+      <div className="form-actions">
+        <button className="button primary" type="submit">Open email app →</button>
+        {profile.email!=='TODO'&&<a className="contact-form-direct" href={'mailto:'+profile.email}>Email directly ↗</a>}
+      </div>
+      <p className={'form-status '+state} aria-live="polite" role={state==='error'?'alert':'status'}>{message}</p>
+      {profile.email==='TODO'&&<p className="form-note">Direct email: TODO. Contact email must be configured before sending.</p>}
+    </form>
+  );
+}
