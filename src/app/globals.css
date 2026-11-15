@@ -140,9 +140,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 @media(max-width:900px){.project-title-row{grid-template-columns:minmax(0,1fr);align-items:start;gap:16px}.project-title-links{justify-content:flex-start}}
 
 .career-launchpad{scroll-margin-top:100px}
-.resume-public-meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;color:#c2c4ba;font-size:13px}
-.resume-public-meta>svg{width:18px;height:18px;color:var(--color-sage)}
-.resume-public-meta>span+span{color:#9da69a}
+.resume-public-meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;color:#55535e;font-size:14px}
+.resume-public-meta>svg{width:18px;height:18px;color:#64806f}
+.resume-public-meta>span:first-of-type{color:#3f3d47;font-weight:600}
+.resume-public-meta>span+span{color:#55535e}
 .resume-public-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
 .resume-action{min-height:44px;padding:10px 16px;display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid rgba(168,184,154,.3);border-radius:999px;background:rgba(168,184,154,.07);color:var(--color-ivory);font-size:13px;font-weight:500;transition:background .18s,border-color .18s,transform .18s}
 .resume-action:hover{transform:translateY(-1px);border-color:rgba(168,184,154,.65);background:rgba(168,184,154,.13)}
