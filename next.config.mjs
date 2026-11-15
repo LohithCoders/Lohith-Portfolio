@@ -4,6 +4,7 @@ const nextConfig = {
   output: isGitHubPages ? 'export' : 'standalone',
   distDir: isGitHubPages ? '.next' : (process.env.NEXT_DIST_DIR || '.next-build'),
   ...(isGitHubPages ? {basePath: '/Lohith-Portfolio', trailingSlash: true} : {}),
+  env: {NEXT_PUBLIC_BASE_PATH: isGitHubPages ? '/Lohith-Portfolio' : ''},
   poweredByHeader: false,
   experimental: {cpus: 1},
 };
